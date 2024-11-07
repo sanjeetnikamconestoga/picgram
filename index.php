@@ -44,7 +44,7 @@ if(isset($_SESSION['Auth']) && $user['ac_status']==1 && !$pagecount){
 
         showPage('header',['page_title'=>$profile['first_name'].' '.$profile['last_name']]);
         showPage('navbar');
-        
+        showPage('profile');
     }
  
   
