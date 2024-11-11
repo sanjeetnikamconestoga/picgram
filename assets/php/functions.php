@@ -532,6 +532,100 @@ $user_id = $_SESSION['userdata']['id'];
     }
 }
 
+function time_ago($timestamp) {
+    // Check if timestamp is numeric (Unix timestamp) or string (DateTime format)
+    if (is_numeric($timestamp)) {
+        $timestamp = (int)$timestamp; // Ensure it's a number (Unix timestamp)
+    } else {
+        $timestamp = strtotime($timestamp); // Convert string timestamp to Unix timestamp
+    }
+
+    $current_time = time();
+    $time_difference = $current_time - $timestamp;
+    $seconds = $time_difference;
+
+    $minutes      = round($seconds / 60);           // value 60 is seconds
+    $hours        = round($seconds / 3600);         // value 3600 is 60 minutes * 60 sec
+    $days         = round($seconds / 86400);        // value 86400 is 24 hours * 60 minutes * 60 sec
+    $weeks        = round($seconds / 604800);       // value 604800 is 7 days * 24 hours * 60 minutes * 60 sec
+    $months       = round($seconds / 2629440);      // value 2629440 is ((365+365+365+365+365)/5/12) days * 24 hours * 60 minutes * 60 sec
+    $years        = round($seconds / 31553280);     // value 31553280 is (365+365+365+365+365)/5 days * 24 hours * 60 minutes * 60 sec
+
+    // Debugging - Uncomment to see the calculation results
+    // echo "Current Time: " . date('Y-m-d H:i:s', $current_time) . "<br>";
+    // echo "Timestamp: " . date('Y-m-d H:i:s', $timestamp) . "<br>";
+    // echo "Seconds Difference: $seconds <br>";
+
+    if ($seconds <= 60) {
+        return "Just Now";
+    } else if ($minutes <= 60) {
+        if ($minutes == 1) {
+            return "one minute ago";
+        } else {
+            return "$minutes minutes ago";
+        }
+    } else if ($hours <= 24) {
+        if ($hours == 1) {
+            return "an hour ago";
+        } else {
+            return "$hours hours ago";
+        }
+    } else if ($days <= 7) {
+        if ($days == 1) {
+            return "yesterday";
+        } else {
+            return "$days days ago";
+        }
+    } else if ($weeks <= 4.3) { // 4.3 == 30/7
+        if ($weeks == 1) {
+            return "one week ago";
+        } else {
+            return "$weeks weeks ago";
+        }
+    } else if ($months <= 12) {
+        if ($months == 1) {
+            return "one month ago";
+        } else {
+            return "$months months ago";
+        }
+    } else {
+        if ($years == 1) {
+            return "one year ago";
+        } else {
+            return "$years years ago";
+        }
+    }
+}
+
+
+
+function get_posts() {
+    global $db; // Assuming you're using mysqli for database connection
+
+    $sql = "SELECT * FROM posts ORDER BY created_at DESC";
+    $result = $db->query($sql);
+
+    $posts = [];
+    while ($row = $result->fetch_assoc()) {
+        $posts[] = $row; // Add each post to the posts array
+    }
+
+    return $posts;
+}
+
+// Function to fetch user information for a given user ID
+function get_user_info($user_id) {
+    global $db; // Assuming you're using mysqli for database connection
+
+    $sql = "SELECT first_name, last_name, username, profile_pic FROM users WHERE id = ?";
+    $stmt = $db->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    return $result->fetch_assoc();
+}
+
 
 
 ?>
