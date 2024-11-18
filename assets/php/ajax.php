@@ -5,8 +5,6 @@ require_once 'functions.php';
 
 
 
-
-
 if(isset($_GET['unblock'])){
   $user_id = $_POST['user_id']; 
     if(unblockUser($user_id)){
@@ -18,6 +16,47 @@ if(isset($_GET['unblock'])){
     echo json_encode($response);
 }
 
+
+
+
+
+
+
+
+
+
+if(isset($_GET['like'])){
+    $post_id = $_POST['post_id'];
+
+    if(!checkLikeStatus($post_id)){
+        if(like($post_id)){
+            $response['status']=true;
+        }else{
+            $response['status']=false;
+        }
+    
+        echo json_encode($response);
+    }
+
+  
+}
+
+
+if(isset($_GET['unlike'])){
+    $post_id = $_POST['post_id'];
+
+    if(checkLikeStatus($post_id)){
+        if(unlike($post_id)){
+            $response['status']=true;
+        }else{
+            $response['status']=false;
+        }
+    
+        echo json_encode($response);
+    }
+
+  
+}
 
 
 
