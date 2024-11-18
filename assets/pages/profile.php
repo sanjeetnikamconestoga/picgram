@@ -163,7 +163,29 @@ foreach($profile_post as $post){
 
                         <div class="flex-fill align-self-stretch overflow-auto" id="comment-section<?=$post['id']?>" style="height: 100px;">
 
+                          <?php
+$comments = getComments($post['id']);
+if(count($comments)<1){
+    ?>
+<p class="p-3 text-center my-2 nce">no comments</p>
+    <?php
+}
+foreach($comments as $comment){
+    $cuser = getUser($comment['user_id']);
+    ?>
+<div class="d-flex align-items-center p-2">
+                                <div><img src="assets/images/profile/<?=$cuser['profile_pic']?>" alt="" height="40" width="40" class="rounded-circle border">
+                                </div>
+                                <div>&nbsp;&nbsp;&nbsp;</div>
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <h6 style="margin: 0px;"><a href="?u=<?=$cuser['username']?>" class="text-decoration-none text-muted">@<?=$cuser['username']?></a> - <?=$comment['comment']?></h6>
+                                    <p style="margin:0px;" class="text-muted"><?=show_time($comment['created_at'])?></p>
+                                </div>
+                            </div>
 
+    <?php
+}
+                          ?>
 
                             
                           
@@ -177,7 +199,8 @@ foreach($profile_post as $post){
   <div class="input-group p-2 border-top">
                             <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
                                 aria-label="Recipient's username" aria-describedby="button-addon2">
-                            
+                            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section<?=$post['id']?>" data-post-id="<?=$post['id']?>" type="button"
+                                id="button-addon2">Post</button>
                         </div>
                             <?php
                         }else{

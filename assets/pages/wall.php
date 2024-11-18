@@ -16,6 +16,7 @@
             }
 foreach($posts as $post){
     $likes = getLikes($post['id']);
+    $comments = getComments($post['id']);
     ?>
      <div class="card mt-4">
                 <div class="card-title d-flex justify-content-between  align-items-center">
@@ -59,7 +60,7 @@ $unlike_btn_display='';
 
                 </span>
                 &nbsp;&nbsp;<i
-                        class="bi bi-chat-left d-flex align-items-center"><span class="p-1 mx-2 text-small" style="font-size:small" data-bs-toggle="modal" data-bs-target="#postview<?=$post['id']?>">
+                        class="bi bi-chat-left d-flex align-items-center"><span class="p-1 mx-2 text-small" style="font-size:small" data-bs-toggle="modal" data-bs-target="#postview<?=$post['id']?>"><?=count($comments)?> comments</span></i> 
                         
                 </h4>
                 <div>
@@ -76,7 +77,13 @@ if($post['post_text']){
     <?php
 }
                 ?>
-                
+                <div class="input-group p-2 <?=$post['post_text']?'border-top':''?>">
+                 
+                        <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
+                                aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-page='wall' data-cs="comment-section<?=$post['id']?>" data-post-id="<?=$post['id']?>" type="button"
+                                id="button-addon2">Post</button>
+                </div>
 
             </div>
             <div class="modal fade" id="postview<?=$post['id']?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -124,9 +131,30 @@ if($post['post_text']){
                         </div>
 
 
-                        <div class="flex-fill align-self-stretch overflow-auto" id="comment-section style="height: 100px;">
+                        <div class="flex-fill align-self-stretch overflow-auto" id="comment-section<?=$post['id']?>" style="height: 100px;">
 
+                          <?php
+if(count($comments)<1){
+    ?>
+<p class="p-3 text-center my-2 nce">no comments</p>
+    <?php
+}
+foreach($comments as $comment){
+    $cuser = getUser($comment['user_id']);
+    ?>
+<div class="d-flex align-items-center p-2">
+                                <div><img src="assets/images/profile/<?=$cuser['profile_pic']?>" alt="" height="40" width="40" class="rounded-circle border">
+                                </div>
+                                <div>&nbsp;&nbsp;&nbsp;</div>
+                                <div class="d-flex flex-column justify-content-start align-items-start">
+                                    <h6 style="margin: 0px;"><a href="?u=<?=$cuser['username']?>" class="text-decoration-none text-dark text-small text-muted">@<?=$cuser['username']?></a> - <?=$comment['comment']?></h6>
+                                    <p style="margin:0px;" class="text-muted">(<?=show_time($comment['created_at'])?>)</p>
+                                </div>
+                            </div>
 
+    <?php
+}
+                          ?>
 
                             
                           
@@ -134,7 +162,12 @@ if($post['post_text']){
                            
 
                         </div>
-
+                        <div class="input-group p-2 border-top">
+                            <input type="text" class="form-control rounded-0 border-0 comment-input" placeholder="say something.."
+                                aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-primary rounded-0 border-0 add-comment" data-cs="comment-section<?=$post['id']?>" data-post-id="<?=$post['id']?>" type="button"
+                                id="button-addon2">Post</button>
+                        </div>
                     </div>
 
 

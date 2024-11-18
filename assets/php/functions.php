@@ -86,13 +86,33 @@ function like($post_id){
 
 
 
+//function for creating comments
+function addComment($post_id,$comment){
+    global $db;
+ $comment = mysqli_real_escape_string($db,$comment);
+
+    $current_user=$_SESSION['userdata']['id'];
+    $query="INSERT INTO comments(user_id,post_id,comment) VALUES($current_user,$post_id,'$comment')";
+    $poster_id = getPosterId($post_id);
+
+   
+
+    return mysqli_query($db,$query);
+    
+}
 
 
 
 
 
 
-
+//function for getting likes count
+function getComments($post_id){
+    global $db;
+    $query="SELECT * FROM comments WHERE post_id=$post_id ORDER BY id DESC";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_all($run,true);
+}
 
 
 
