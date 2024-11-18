@@ -22,7 +22,43 @@ function gettime($date){
 
 
 
+//function for follow the user
+function followUser($user_id){
+    global $db;
+    $cu = getUser($_SESSION['userdata']['id']);
+    $current_user=$_SESSION['userdata']['id'];
+    $query="INSERT INTO follow_list(follower_id,user_id) VALUES($current_user,$user_id)";
+  
+    return mysqli_query($db,$query);
+    
+}
 
+
+
+//function for blocking the user
+function blockUser($blocked_user_id){
+    global $db;
+    $cu = getUser($_SESSION['userdata']['id']);
+    $current_user=$_SESSION['userdata']['id'];
+    $query="INSERT INTO block_list(user_id,blocked_user_id) VALUES($current_user,$blocked_user_id)";
+  
+    $query2="DELETE FROM follow_list WHERE follower_id=$current_user && user_id=$blocked_user_id";
+    mysqli_query($db,$query2);
+    $query3="DELETE FROM follow_list WHERE follower_id=$blocked_user_id && user_id=$current_user";
+    mysqli_query($db,$query3);
+
+   
+    return mysqli_query($db,$query);
+    
+}
+
+//for unblocking the user
+function unblockUser($user_id){
+    global $db;
+    $current_user=$_SESSION['userdata']['id'];
+    $query="DELETE FROM block_list WHERE user_id=$current_user && blocked_user_id=$user_id";
+    return mysqli_query($db,$query);   
+}
 
 //function checkLikeStatus
 function checkLikeStatus($post_id){
@@ -90,7 +126,15 @@ function unlike($post_id){
   
     return mysqli_query($db,$query);
 }
+function unfollowUser($user_id){
+    global $db;
+    $current_user=$_SESSION['userdata']['id'];
+    $query="DELETE FROM follow_list WHERE follower_id=$current_user && user_id=$user_id";
 
+    return mysqli_query($db,$query);
+ 
+    
+}
 
 
 //function for show errors
@@ -263,11 +307,36 @@ function getUser($user_id){
 }
 
 
+//for filtering the suggestion list
+function filterFollowSuggestion(){
+$list = getFollowSuggestions();
+$filter_list  = array();
+foreach($list as $user){
+    if(!checkFollowStatus($user['id']) && !checkBS($user['id']) && count($filter_list)<5){
+     $filter_list[]=$user;
+    }
+}
 
+return $filter_list;
+}
 
+//for checking the user is followed by current user or not
+function checkFollowStatus($user_id){
+    global $db;
+    $current_user = $_SESSION['userdata']['id'];
+    $query="SELECT count(*) as row FROM follow_list WHERE follower_id=$current_user && user_id=$user_id";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_assoc($run)['row'];
+}
 
-
-
+//for checking the user is followed by current user or not
+function checkBlockStatus($current_user,$user_id){
+    global $db;
+    
+    $query="SELECT count(*) as row FROM block_list WHERE user_id=$current_user && blocked_user_id=$user_id";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_assoc($run)['row'];
+}
 
 
 function checkBS($user_id){
@@ -277,7 +346,33 @@ function checkBS($user_id){
     $run = mysqli_query($db,$query);
     return mysqli_fetch_assoc($run)['row'];
 }
+//
 
+//for getting users for follow suggestions
+function getFollowSuggestions(){
+    global $db;
+
+    $current_user = $_SESSION['userdata']['id'];
+    $query = "SELECT * FROM users WHERE id!=$current_user";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_all($run,true);
+}
+
+//get followers count
+function getFollowers($user_id){
+    global $db;
+    $query = "SELECT * FROM follow_list WHERE user_id=$user_id";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_all($run,true);
+}
+
+//get followers count
+function getFollowing($user_id){
+    global $db;
+    $query = "SELECT * FROM follow_list WHERE follower_id=$user_id";
+    $run = mysqli_query($db,$query);
+    return mysqli_fetch_all($run,true);
+}
 
 //for getting posts by id
 function getPostById($user_id){
@@ -350,7 +445,11 @@ mysqli_query($db,$not);
 function filterPosts(){
     $list = getPost();
     $filter_list  = array();
-
+    foreach($list as $post){
+        if(checkFollowStatus($post['user_id']) || $post['user_id']==$_SESSION['userdata']['id']){
+         $filter_list[]=$post;
+        }
+    }
     
     return $filter_list;
     }

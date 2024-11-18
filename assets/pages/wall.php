@@ -14,7 +14,7 @@
             if(count($posts)<1){
                 echo "<p style='width:100%' class='p-2 bg-white border rounded text-center my-3 col-12'>Follow Someone or Add a new post</p>";
             }
-foreach($posts as $post)
+foreach($posts as $post){
     $likes = getLikes($post['id']);
     ?>
      <div class="card mt-4">
@@ -166,7 +166,14 @@ foreach($likes as $f){
     $fbtn='';
     if(checkBS($f['user_id'])){
 continue;
+    }else if(checkFollowStatus($f['user_id'])){
+        $fbtn = '<button class="btn btn-sm btn-danger unfollowbtn" data-user-id='.$fuser['id'].' >Unfollow</button>';
+    }else if($user['id']==$f['user_id']){
+        $fbtn='';
+    }else{
+        $fbtn = '<button class="btn btn-sm btn-primary followbtn" data-user-id='.$fuser['id'].' >Follow</button>';
 
+    }
     ?>
 <div class="d-flex justify-content-between">
                     <div class="d-flex align-items-center p-2">
@@ -216,9 +223,31 @@ continue;
 
             <div>
                 <h6 class="text-muted p-2">You Can Follow Them</h6>
+                <?php
+foreach($follow_suggestions as $suser){
+    ?>
+<div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center p-2">
+                        <div><img src="assets/images/profile/<?=$suser['profile_pic']?>" alt="" height="40" width="40" class="rounded-circle border">
+                        </div>
+                        <div>&nbsp;&nbsp;</div>
+                        <div class="d-flex flex-column justify-content-center">
+                            <a href='?u=<?=$suser['username']?>' class="text-decoration-none text-dark"><h6 style="margin: 0px;font-size: small;"><?=$suser['first_name']?> <?=$suser['last_name']?></h6></a>
+                            <p style="margin:0px;font-size:small" class="text-muted">@<?=$suser['username']?></p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-primary followbtn" data-user-id='<?=$suser['id']?>' >Follow</button>
 
+                    </div>
+                </div>
+    <?php
+}
 
-
+if(count($follow_suggestions)<1){
+    echo "<p class='p-2 bg-white border rounded text-center'>No Suggestions For You</p>";
+}
+                ?>
                 
                
 
