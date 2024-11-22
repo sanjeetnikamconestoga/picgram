@@ -39,6 +39,7 @@ if(isset($_GET['resended'])){
                 <br>
                 <a href="assets/php/actions.php?logout" class="text-decoration-none mt-5"><i class="bi bi-arrow-left-circle-fill"></i>
                     Logout</a>
+                    <!-- // test -->
             </form>
         </div>
     </div>

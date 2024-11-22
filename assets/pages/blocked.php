@@ -1,6 +1,7 @@
 
 <?php
 global $user;
+// test
 ?>
 
 <body>

@@ -17,6 +17,7 @@ if(isset($_SESSION['forgot_code']) && !isset($_SESSION['auth_temp'])){
                 </div>
                 <h1 class="h5 mb-3 fw-normal">Forgot Your Password ?</h1>
 <?php
+// test
 if($action=='forgotpassword'){
     ?>
   <div class="form-floating">

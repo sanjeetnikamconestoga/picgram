@@ -11,7 +11,7 @@
 if(isset($_GET['success'])){
     ?>
 <p class="text-success">Profile is updated !</p>
-
+<!-- // test -->
 <?php
 }
                 ?>

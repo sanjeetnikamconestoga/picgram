@@ -61,6 +61,7 @@ $unlike_btn_display='';
                 </span>
                 &nbsp;&nbsp;<i
                         class="bi bi-chat-left d-flex align-items-center"><span class="p-1 mx-2 text-small" style="font-size:small" data-bs-toggle="modal" data-bs-target="#postview<?=$post['id']?>"><?=count($comments)?> comments</span></i> 
+                        <!-- // test -->
                         
                 </h4>
                 <div>
